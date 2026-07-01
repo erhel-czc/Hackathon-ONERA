@@ -51,7 +51,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [248, 8.0]
+    coordinate: [360, 8.0]
     rotation: 0
     state: enabled
 - name: rfGain
@@ -72,7 +72,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [392, 8.0]
+    coordinate: [560, 8.0]
     rotation: 0
     state: enabled
 - name: samp_rate
@@ -84,7 +84,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [160, 8.0]
+    coordinate: [232, 8.0]
     rotation: 0
     state: enabled
 - name: analog_wfm_rcv_0
@@ -101,7 +101,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [544, 352.0]
+    coordinate: [720, 456.0]
     rotation: 0
     state: enabled
 - name: audio_sink_0
@@ -118,7 +118,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [720, 360.0]
+    coordinate: [968, 468.0]
     rotation: 0
     state: enabled
 - name: blocks_file_sink_0
@@ -289,7 +289,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [416, 192.0]
+    coordinate: [560, 324.0]
     rotation: 0
     state: enabled
 - name: rational_resampler_xxx_0
@@ -309,7 +309,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [368, 336.0]
+    coordinate: [384, 432.0]
     rotation: 0
     state: enabled
 - name: soapy_rtlsdr_source_0
@@ -347,4 +347,4 @@ connections:
 
 metadata:
   file_format: 1
-  grc_version: 3.10.9.2
+  grc_version: 3.10.12.0
