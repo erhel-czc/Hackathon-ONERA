@@ -1,6 +1,6 @@
 options:
   parameters:
-    author: erhelito
+    author: ''
     catch_exceptions: 'True'
     category: '[GRC Hier Blocks]'
     cmake_opt: ''
@@ -11,7 +11,7 @@ options:
     gen_linking: dynamic
     generate_options: qt_gui
     hier_block_src_path: '.:'
-    id: RTLSDRreciever
+    id: sineWaveFlowgraph
     max_nouts: '0'
     output_language: python
     placement: (0,0)
@@ -22,7 +22,7 @@ options:
     run_options: prompt
     sizing_mode: fixed
     thread_safe_setters: ''
-    title: RTLSDRreciever
+    title: Your First Flowgraph
     window_size: (1000,1000)
   states:
     bus_sink: false
@@ -33,92 +33,74 @@ options:
     state: enabled
 
 blocks:
-- name: freq
-  id: variable_qtgui_range
-  parameters:
-    comment: ''
-    gui_hint: 0,0,1,10
-    label: Center Frequency
-    min_len: '200'
-    orient: QtCore.Qt.Horizontal
-    rangeType: float
-    start: 87.7e6
-    step: 200e3
-    stop: 107.9e6
-    value: 90.4e6
-    widget: counter_slider
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [360, 8.0]
-    rotation: 0
-    state: enabled
-- name: rfGain
-  id: variable_qtgui_range
-  parameters:
-    comment: ''
-    gui_hint: 1,0,1,10
-    label: RF Gain (dB)
-    min_len: '200'
-    orient: QtCore.Qt.Horizontal
-    rangeType: float
-    start: '0'
-    step: '1'
-    stop: '50'
-    value: '10'
-    widget: counter_slider
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [560, 8.0]
-    rotation: 0
-    state: enabled
 - name: samp_rate
   id: variable
   parameters:
     comment: ''
-    value: '2480000'
+    value: '32000'
   states:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [232, 8.0]
+    coordinate: [232, 16.0]
     rotation: 0
     state: enabled
-- name: analog_wfm_rcv_0
-  id: analog_wfm_rcv
+- name: analog_sig_source_x_0
+  id: analog_sig_source_x
   parameters:
     affinity: ''
     alias: ''
-    audio_decimation: '4'
+    amp: '1'
+    comment: ''
+    freq: '1000'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    offset: '0'
+    phase: '0'
+    samp_rate: samp_rate
+    showports: 'False'
+    type: complex
+    waveform: analog.GR_COS_WAVE
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [0, 272.0]
+    rotation: 0
+    state: enabled
+- name: epy_block_0
+  id: epy_block
+  parameters:
+    _source_code: "\"\"\"\nEmbedded Python Blocks:\n\nEach time this file is saved,\
+      \ GRC will instantiate the first class it finds\nto get ports and parameters\
+      \ of your block. The arguments to __init__  will\nbe the parameters. All of\
+      \ them are required to have default values!\n\"\"\"\n\nimport numpy as np\n\
+      from gnuradio import gr\n\n\nclass blk(gr.sync_block):  # other base classes\
+      \ are basic_block, decim_block, interp_block\n    \"\"\"Embedded Python Block\
+      \ example - a simple multiply const\"\"\"\n\n    def __init__(self):  # only\
+      \ default arguments here\n        \"\"\"arguments to this function show up as\
+      \ parameters in GRC\"\"\"\n        gr.sync_block.__init__(\n            self,\n\
+      \            name='IQ to I and Q Block',   # will show up in GRC\n         \
+      \   in_sig=[np.complex64],\n            out_sig=[np.float32,np.float32]\n  \
+      \      )\n        # if an attribute with the same name as a parameter is found,\n\
+      \        # a callback is registered (properties work, too).\n\n    def work(self,\
+      \ input_items, output_items):\n        \"\"\"example: add or multiply based\
+      \ on flag\"\"\"\n        output_items[0][:] = np.real(input_items[0][:])\n \
+      \       output_items[1][:] = np.imag(input_items[0][:])\n\n        return len(output_items[0])\n\
+      \t"
+    affinity: ''
+    alias: ''
     comment: ''
     maxoutbuf: '0'
     minoutbuf: '0'
-    quad_rate: 48000*4
   states:
+    _io_cache: ('IQ to I and Q Block', 'blk', [], [('0', 'complex', 1)], [('0', 'float',
+      1), ('1', 'float', 1)], 'Embedded Python Block example - a simple multiply const',
+      [])
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [720, 456.0]
-    rotation: 0
-    state: enabled
-- name: audio_sink_0
-  id: audio_sink
-  parameters:
-    affinity: ''
-    alias: ''
-    comment: ''
-    device_name: ''
-    num_inputs: '1'
-    ok_to_block: 'True'
-    samp_rate: '48000'
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [968, 468.0]
+    coordinate: [528, 332.0]
     rotation: 0
     state: enabled
 - name: qtgui_freq_sink_x_0
@@ -152,7 +134,7 @@ blocks:
     color9: '"dark green"'
     comment: ''
     ctrlpanel: 'False'
-    fc: freq
+    fc: '0'
     fftsize: '1024'
     freqhalf: 'True'
     grid: 'False'
@@ -199,7 +181,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [600, 192.0]
+    coordinate: [360, 532.0]
     rotation: 0
     state: enabled
 - name: qtgui_time_sink_x_0
@@ -256,7 +238,7 @@ blocks:
     marker8: '-1'
     marker9: '-1'
     name: '""'
-    nconnections: '1'
+    nconnections: '2'
     size: '1024'
     srate: samp_rate
     stemplot: 'False'
@@ -276,7 +258,7 @@ blocks:
     tr_mode: qtgui.TRIG_MODE_FREE
     tr_slope: qtgui.TRIG_SLOPE_POS
     tr_tag: '""'
-    type: complex
+    type: float
     update_time: '0.10'
     width1: '1'
     width10: '1'
@@ -296,122 +278,15 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [352, 588.0]
-    rotation: 0
-    state: enabled
-- name: qtgui_waterfall_sink_x_0
-  id: qtgui_waterfall_sink_x
-  parameters:
-    affinity: ''
-    alias: ''
-    alpha1: '1.0'
-    alpha10: '1.0'
-    alpha2: '1.0'
-    alpha3: '1.0'
-    alpha4: '1.0'
-    alpha5: '1.0'
-    alpha6: '1.0'
-    alpha7: '1.0'
-    alpha8: '1.0'
-    alpha9: '1.0'
-    axislabels: 'True'
-    bw: samp_rate
-    color1: '0'
-    color10: '0'
-    color2: '0'
-    color3: '0'
-    color4: '0'
-    color5: '0'
-    color6: '0'
-    color7: '0'
-    color8: '0'
-    color9: '0'
-    comment: ''
-    fc: freq
-    fftsize: '1024'
-    freqhalf: 'True'
-    grid: 'False'
-    gui_hint: ''
-    int_max: '10'
-    int_min: '-140'
-    label1: ''
-    label10: ''
-    label2: ''
-    label3: ''
-    label4: ''
-    label5: ''
-    label6: ''
-    label7: ''
-    label8: ''
-    label9: ''
-    legend: 'True'
-    maxoutbuf: '0'
-    minoutbuf: '0'
-    name: '""'
-    nconnections: '1'
-    showports: 'False'
-    type: complex
-    update_time: '0.10'
-    wintype: window.WIN_BLACKMAN_hARRIS
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [560, 324.0]
-    rotation: 0
-    state: enabled
-- name: rational_resampler_xxx_0
-  id: rational_resampler_xxx
-  parameters:
-    affinity: ''
-    alias: ''
-    comment: ''
-    decim: '32'
-    fbw: '0'
-    interp: '3'
-    maxoutbuf: '0'
-    minoutbuf: '0'
-    taps: '[]'
-    type: ccc
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [384, 432.0]
-    rotation: 0
-    state: enabled
-- name: soapy_rtlsdr_source_0
-  id: soapy_rtlsdr_source
-  parameters:
-    affinity: ''
-    agc: 'False'
-    alias: ''
-    bias: 'False'
-    bufflen: '16384'
-    center_freq: freq
-    comment: ''
-    dev_args: ''
-    freq_correction: '0'
-    gain: rfGain
-    maxoutbuf: '0'
-    minoutbuf: '0'
-    samp_rate: samp_rate
-    type: fc32
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [40, 288.0]
+    coordinate: [1032, 308.0]
     rotation: 0
     state: enabled
 
 connections:
-- [analog_wfm_rcv_0, '0', audio_sink_0, '0']
-- [rational_resampler_xxx_0, '0', analog_wfm_rcv_0, '0']
-- [soapy_rtlsdr_source_0, '0', qtgui_freq_sink_x_0, '0']
-- [soapy_rtlsdr_source_0, '0', qtgui_time_sink_x_0, '0']
-- [soapy_rtlsdr_source_0, '0', qtgui_waterfall_sink_x_0, '0']
-- [soapy_rtlsdr_source_0, '0', rational_resampler_xxx_0, '0']
+- [analog_sig_source_x_0, '0', epy_block_0, '0']
+- [analog_sig_source_x_0, '0', qtgui_freq_sink_x_0, '0']
+- [epy_block_0, '0', qtgui_time_sink_x_0, '0']
+- [epy_block_0, '1', qtgui_time_sink_x_0, '1']
 
 metadata:
   file_format: 1

@@ -7,7 +7,7 @@
 # GNU Radio Python Flow Graph
 # Title: RTLSDRreciever
 # Author: erhelito
-# GNU Radio version: 3.10.9.2
+# GNU Radio version: 3.10.12.0
 
 from PyQt5 import Qt
 from gnuradio import qtgui
@@ -26,6 +26,7 @@ from gnuradio.eng_arg import eng_float, intx
 from gnuradio import eng_notation
 from gnuradio import soapy
 import sip
+import threading
 
 
 
@@ -52,7 +53,7 @@ class RTLSDRreciever(gr.top_block, Qt.QWidget):
         self.top_grid_layout = Qt.QGridLayout()
         self.top_layout.addLayout(self.top_grid_layout)
 
-        self.settings = Qt.QSettings("GNU Radio", "RTLSDRreciever")
+        self.settings = Qt.QSettings("gnuradio/flowgraphs", "RTLSDRreciever")
 
         try:
             geometry = self.settings.value("geometry")
@@ -60,6 +61,7 @@ class RTLSDRreciever(gr.top_block, Qt.QWidget):
                 self.restoreGeometry(geometry)
         except BaseException as exc:
             print(f"Qt GUI: Could not restore geometry: {str(exc)}", file=sys.stderr)
+        self.flowgraph_started = threading.Event()
 
         ##################################################
         # Variables
@@ -273,7 +275,7 @@ class RTLSDRreciever(gr.top_block, Qt.QWidget):
 
 
     def closeEvent(self, event):
-        self.settings = Qt.QSettings("GNU Radio", "RTLSDRreciever")
+        self.settings = Qt.QSettings("gnuradio/flowgraphs", "RTLSDRreciever")
         self.settings.setValue("geometry", self.saveGeometry())
         self.stop()
         self.wait()
@@ -316,6 +318,7 @@ def main(top_block_cls=RTLSDRreciever, options=None):
     tb = top_block_cls()
 
     tb.start()
+    tb.flowgraph_started.set()
 
     tb.show()
 
