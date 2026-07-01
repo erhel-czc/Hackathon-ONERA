@@ -7,13 +7,14 @@
 # GNU Radio Python Flow Graph
 # Title: RTLSDRreciever
 # Author: erhelito
-# GNU Radio version: 3.10.12.0
+# GNU Radio version: 3.10.9.2
 
 from PyQt5 import Qt
 from gnuradio import qtgui
 from PyQt5 import QtCore
 from gnuradio import analog
 from gnuradio import audio
+from gnuradio import blocks
 from gnuradio import filter
 from gnuradio.filter import firdes
 from gnuradio import gr
@@ -26,7 +27,6 @@ from gnuradio.eng_arg import eng_float, intx
 from gnuradio import eng_notation
 from gnuradio import soapy
 import sip
-import threading
 
 
 
@@ -53,7 +53,7 @@ class RTLSDRreciever(gr.top_block, Qt.QWidget):
         self.top_grid_layout = Qt.QGridLayout()
         self.top_layout.addLayout(self.top_grid_layout)
 
-        self.settings = Qt.QSettings("gnuradio/flowgraphs", "RTLSDRreciever")
+        self.settings = Qt.QSettings("GNU Radio", "RTLSDRreciever")
 
         try:
             geometry = self.settings.value("geometry")
@@ -61,7 +61,6 @@ class RTLSDRreciever(gr.top_block, Qt.QWidget):
                 self.restoreGeometry(geometry)
         except BaseException as exc:
             print(f"Qt GUI: Could not restore geometry: {str(exc)}", file=sys.stderr)
-        self.flowgraph_started = threading.Event()
 
         ##################################################
         # Variables
@@ -204,6 +203,8 @@ class RTLSDRreciever(gr.top_block, Qt.QWidget):
 
         self._qtgui_const_sink_x_0_win = sip.wrapinstance(self.qtgui_const_sink_x_0.qwidget(), Qt.QWidget)
         self.top_layout.addWidget(self._qtgui_const_sink_x_0_win)
+        self.blocks_file_sink_0 = blocks.file_sink(gr.sizeof_gr_complex*1, 'output', False)
+        self.blocks_file_sink_0.set_unbuffered(False)
         self.audio_sink_0 = audio.sink(48000, '', True)
         self.analog_wfm_rcv_0 = analog.wfm_rcv(
         	quad_rate=(48000*4),
@@ -216,13 +217,14 @@ class RTLSDRreciever(gr.top_block, Qt.QWidget):
         ##################################################
         self.connect((self.analog_wfm_rcv_0, 0), (self.audio_sink_0, 0))
         self.connect((self.rational_resampler_xxx_0, 0), (self.analog_wfm_rcv_0, 0))
+        self.connect((self.rational_resampler_xxx_0, 0), (self.blocks_file_sink_0, 0))
         self.connect((self.soapy_rtlsdr_source_0, 0), (self.qtgui_const_sink_x_0, 0))
         self.connect((self.soapy_rtlsdr_source_0, 0), (self.qtgui_waterfall_sink_x_0, 0))
         self.connect((self.soapy_rtlsdr_source_0, 0), (self.rational_resampler_xxx_0, 0))
 
 
     def closeEvent(self, event):
-        self.settings = Qt.QSettings("gnuradio/flowgraphs", "RTLSDRreciever")
+        self.settings = Qt.QSettings("GNU Radio", "RTLSDRreciever")
         self.settings.setValue("geometry", self.saveGeometry())
         self.stop()
         self.wait()
@@ -262,7 +264,6 @@ def main(top_block_cls=RTLSDRreciever, options=None):
     tb = top_block_cls()
 
     tb.start()
-    tb.flowgraph_started.set()
 
     tb.show()
 
