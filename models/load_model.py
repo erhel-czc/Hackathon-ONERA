@@ -1,11 +1,11 @@
 import torch
 
-def load_model(model_path: str, device: torch.device) -> torch.jit.ScriptModule:
+def load_model(model_path, device):
     model = torch.jit.load(model_path, map_location=device)
     model.eval()
     return model
 
-def predict_proba(model: torch.jit.ScriptModule, x: torch.Tensor) -> float:
+def predict_proba(model, x):
     with torch.no_grad():
         out = model(x)
         return float(out.reshape(-1)[0].item())
