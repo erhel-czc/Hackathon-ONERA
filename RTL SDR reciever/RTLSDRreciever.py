@@ -203,7 +203,6 @@ class RTLSDRreciever(gr.top_block, Qt.QWidget):
 
         self._qtgui_const_sink_x_0_win = sip.wrapinstance(self.qtgui_const_sink_x_0.qwidget(), Qt.QWidget)
         self.top_layout.addWidget(self._qtgui_const_sink_x_0_win)
-        self.blocks_throttle2_0 = blocks.throttle( gr.sizeof_gr_complex*1, samp_rate, True, 0 if "auto" == "auto" else max( int(float(0.1) * samp_rate) if "auto" == "time" else int(0.1), 1) )
         self.blocks_file_sink_0 = blocks.file_sink(gr.sizeof_gr_complex*1, 'output', False)
         self.blocks_file_sink_0.set_unbuffered(False)
         self.audio_sink_0 = audio.sink(48000, '', True)
@@ -217,9 +216,8 @@ class RTLSDRreciever(gr.top_block, Qt.QWidget):
         # Connections
         ##################################################
         self.connect((self.analog_wfm_rcv_0, 0), (self.audio_sink_0, 0))
-        self.connect((self.blocks_throttle2_0, 0), (self.blocks_file_sink_0, 0))
         self.connect((self.rational_resampler_xxx_0, 0), (self.analog_wfm_rcv_0, 0))
-        self.connect((self.soapy_rtlsdr_source_0, 0), (self.blocks_throttle2_0, 0))
+        self.connect((self.rational_resampler_xxx_0, 0), (self.blocks_file_sink_0, 0))
         self.connect((self.soapy_rtlsdr_source_0, 0), (self.qtgui_const_sink_x_0, 0))
         self.connect((self.soapy_rtlsdr_source_0, 0), (self.qtgui_waterfall_sink_x_0, 0))
         self.connect((self.soapy_rtlsdr_source_0, 0), (self.rational_resampler_xxx_0, 0))
@@ -240,7 +238,6 @@ class RTLSDRreciever(gr.top_block, Qt.QWidget):
         self.samp_rate = samp_rate
         self.qtgui_waterfall_sink_x_0.set_frequency_range(self.freq, self.samp_rate)
         self.soapy_rtlsdr_source_0.set_sample_rate(0, self.samp_rate)
-        self.blocks_throttle2_0.set_sample_rate(self.samp_rate)
 
     def get_rfGain(self):
         return self.rfGain
