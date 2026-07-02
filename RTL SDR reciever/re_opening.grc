@@ -11,7 +11,7 @@ options:
     gen_linking: dynamic
     generate_options: qt_gui
     hier_block_src_path: '.:'
-    id: RTLSDRreciever
+    id: re_opening
     max_nouts: '0'
     output_language: python
     placement: (0,0)
@@ -22,7 +22,7 @@ options:
     run_options: prompt
     sizing_mode: fixed
     thread_safe_setters: ''
-    title: RTLSDRreciever
+    title: Not titled yet
     window_size: (1000,1000)
   states:
     bus_sink: false
@@ -33,48 +33,6 @@ options:
     state: enabled
 
 blocks:
-- name: freq
-  id: variable_qtgui_range
-  parameters:
-    comment: ''
-    gui_hint: 0,0,1,10
-    label: Center Frequency
-    min_len: '200'
-    orient: QtCore.Qt.Horizontal
-    rangeType: float
-    start: 87.7e6
-    step: 200e3
-    stop: 107.9e6
-    value: 90.4e6
-    widget: counter_slider
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [360, 8.0]
-    rotation: 0
-    state: enabled
-- name: rfGain
-  id: variable_qtgui_range
-  parameters:
-    comment: ''
-    gui_hint: 1,0,1,10
-    label: RF Gain (dB)
-    min_len: '200'
-    orient: QtCore.Qt.Horizontal
-    rangeType: float
-    start: '0'
-    step: '1'
-    stop: '50'
-    value: '10'
-    widget: counter_slider
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [560, 8.0]
-    rotation: 0
-    state: enabled
 - name: samp_rate
   id: variable
   parameters:
@@ -84,80 +42,29 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [232, 8.0]
+    coordinate: [184, 12]
     rotation: 0
     state: enabled
-- name: analog_wfm_rcv_0
-  id: analog_wfm_rcv
+- name: blocks_file_source_0
+  id: blocks_file_source
   parameters:
     affinity: ''
     alias: ''
-    audio_decimation: '4'
+    begin_tag: pmt.PMT_NIL
     comment: ''
+    file: /home/erhelito/Nextcloud/files/travail/info/Hackathon-ONERA/RTL SDR reciever/output
+    length: '0'
     maxoutbuf: '0'
     minoutbuf: '0'
-    quad_rate: 48000*4
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [720, 456.0]
-    rotation: 0
-    state: enabled
-- name: audio_sink_0
-  id: audio_sink
-  parameters:
-    affinity: ''
-    alias: ''
-    comment: ''
-    device_name: ''
-    num_inputs: '1'
-    ok_to_block: 'True'
-    samp_rate: '48000'
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [968, 468.0]
-    rotation: 0
-    state: enabled
-- name: blocks_file_sink_0
-  id: blocks_file_sink
-  parameters:
-    affinity: ''
-    alias: ''
-    append: 'False'
-    comment: ''
-    file: output
-    type: complex
-    unbuffered: 'False'
-    vlen: '1'
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [624, 288.0]
-    rotation: 0
-    state: enabled
-- name: blocks_throttle2_0
-  id: blocks_throttle2
-  parameters:
-    affinity: ''
-    alias: ''
-    comment: ''
-    ignoretag: 'True'
-    limit: auto
-    maximum: '0.1'
-    maxoutbuf: '0'
-    minoutbuf: '0'
-    samples_per_second: samp_rate
+    offset: '0'
+    repeat: 'True'
     type: complex
     vlen: '1'
   states:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [344, 280.0]
+    coordinate: [208, 216.0]
     rotation: 0
     state: enabled
 - name: qtgui_const_sink_x_0
@@ -249,7 +156,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [248, 160.0]
+    coordinate: [448, 96.0]
     rotation: 0
     state: enabled
 - name: qtgui_waterfall_sink_x_0
@@ -280,7 +187,7 @@ blocks:
     color8: '0'
     color9: '0'
     comment: ''
-    fc: freq
+    fc: '0'
     fftsize: '1024'
     freqhalf: 'True'
     grid: 'False'
@@ -310,62 +217,13 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [496, 200.0]
-    rotation: 0
-    state: enabled
-- name: rational_resampler_xxx_0
-  id: rational_resampler_xxx
-  parameters:
-    affinity: ''
-    alias: ''
-    comment: ''
-    decim: '32'
-    fbw: '0'
-    interp: '3'
-    maxoutbuf: '0'
-    minoutbuf: '0'
-    taps: '[]'
-    type: ccc
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [384, 432.0]
-    rotation: 0
-    state: enabled
-- name: soapy_rtlsdr_source_0
-  id: soapy_rtlsdr_source
-  parameters:
-    affinity: ''
-    agc: 'False'
-    alias: ''
-    bias: 'False'
-    bufflen: '16384'
-    center_freq: freq
-    comment: ''
-    dev_args: ''
-    freq_correction: '0'
-    gain: rfGain
-    maxoutbuf: '0'
-    minoutbuf: '0'
-    samp_rate: samp_rate
-    type: fc32
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [16, 288.0]
+    coordinate: [464, 240.0]
     rotation: 0
     state: enabled
 
 connections:
-- [analog_wfm_rcv_0, '0', audio_sink_0, '0']
-- [blocks_throttle2_0, '0', blocks_file_sink_0, '0']
-- [rational_resampler_xxx_0, '0', analog_wfm_rcv_0, '0']
-- [soapy_rtlsdr_source_0, '0', blocks_throttle2_0, '0']
-- [soapy_rtlsdr_source_0, '0', qtgui_const_sink_x_0, '0']
-- [soapy_rtlsdr_source_0, '0', qtgui_waterfall_sink_x_0, '0']
-- [soapy_rtlsdr_source_0, '0', rational_resampler_xxx_0, '0']
+- [blocks_file_source_0, '0', qtgui_const_sink_x_0, '0']
+- [blocks_file_source_0, '0', qtgui_waterfall_sink_x_0, '0']
 
 metadata:
   file_format: 1
