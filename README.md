@@ -13,19 +13,11 @@ La suite du travail consiste surtout à fiabiliser l’entrée des buffers IQ, a
 
 ## Installation
 
-### Avec conda (recommandé — inclut GNU Radio)
+### Avec conda (recommandé - inclut GNU Radio)
 
 ```bash
 conda env create -f environment.yml
 conda activate hackathon-onera
-```
-
-### Avec pip seul (sans GNU Radio)
-
-> GNU Radio doit être installé séparément via conda pour que les blocs GNU Radio utilisant pytorch fonctionnent correctement.
-
-```bash
-pip install -r requirements.txt
 ```
 
 ### Problèmes d'antenne avec Pyrtlsdr
