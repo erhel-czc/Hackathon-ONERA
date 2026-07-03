@@ -21,19 +21,10 @@ class blk(gr.sync_block):
         self.threshold = float(threshold)
         self.model_path = model_path
         self.model = self.load_model(
-            self.resolve_model_path(model_path))
+            model_path)
         self.last_probability = 0.0
         self.last_class_name = 'noise'
         self._warned_once = False
-
-        
-
-    def resolve_model_path(self, model_path):
-        """if os.path.isabs(model_path):
-            return model_path"""
-        """base_dir = os.path.dirname(os.path.abspath(__file__))
-        return os.path.normpath(os.path.join(base_dir, model_path))"""
-        return model_path
 
     def load_model(self, model_path):
         model = torch.jit.load(model_path)
@@ -56,12 +47,6 @@ class blk(gr.sync_block):
 
     def work(self, input_items, output_items):
         iq = input_items[0]
-        """"
-        !!!!!!!!!!!!!!!!!!
-        justify below
-        !!!!!!!!!!!!!!!!!!
-        """
-
         # Expected model input: batch of IQ samples encoded as [real, imag].
         features = np.stack((iq.real, iq.imag), axis=-
                             1).astype(np.float32, copy=False)
