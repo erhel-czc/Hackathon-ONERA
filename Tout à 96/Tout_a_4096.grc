@@ -98,11 +98,9 @@ blocks:
       \  out_sig=[np.complex64]\n        )\n        self.signal = []\n        self.count\
       \ = 0\n\n    def work(self, input_items, output_items):\n        self.signal\
       \ = np.concatenate((self.signal,input_items[0]),axis=0)\n        if len(self.signal)\
-      \ >= 4096:\n            self.count+=1\n            if self.count==100:\n   \
-      \             output_items[0] = self.signal[:4096]\n                self.signal\
-      \ = self.signal[4096:]\n                print(\"boom\")\n            else:\n\
-      \                output_items[0] = []\n        else :\n            output_items[0]\
-      \ = []\n        return len(output_items[0])\n"
+      \ >= 4096 and self.count==10:\n            output_items[0] = self.signal[:4096]\n\
+      \            self.signal = self.signal[4096:]\n        else :\n            output_items[0]\
+      \ = []\n            self.count+=1\n        return len(output_items[0])\n"
     affinity: ''
     alias: ''
     comment: ''
@@ -121,8 +119,8 @@ blocks:
   id: epy_block
   parameters:
     _source_code: "import numpy as np\nfrom gnuradio import gr\n\n\nclass blk(gr.sync_block):\n\
-      \n    def __init__(self):  \n        gr.sync_block.__init__(\n            self,\n\
-      \            name='Tiago Print Block',  \n            in_sig=[np.complex64],\n\
+      \n    def __init__(self):  \n            gr.sync_block.__init__(\n         \
+      \   self,\n            name='Tiago Print Block',  \n            in_sig=[np.complex64],\n\
       \            out_sig=[np.complex64]\n        )\n\n    def work(self, input_items,\
       \ output_items):\n        output_items[0][:] = input_items[0]\n        print(len(output_items[0]))\n\
       \        return len(output_items[0])\n"
