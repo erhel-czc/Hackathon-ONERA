@@ -1,0 +1,6 @@
+echo "1-1:1.0" | sudo tee /sys/bus/usb/drivers/dvb_usb_rtl28xxu/unbind
+sudo modprobe -r rtl2832_sdr rtl2832 dvb_usb_rtl28xxu dvb_usb_v2
+lsmod | grep -E 'rtl2832|dvb_usb_rtl28xxu|dvb_usb_v2' || true
+
+printf "blacklist dvb_usb_rtl28xxu\nblacklist dvb_usb_v2\nblacklist rtl2832\nblacklist rtl2832_sdr\n" | sudo tee /etc/modprobe.d/blacklist-rtl-sdr-dvb.conf
+sudo update-initramfs -u
