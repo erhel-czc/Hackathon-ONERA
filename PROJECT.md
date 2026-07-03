@@ -1,3 +1,7 @@
+### Nature du livrable
+
+GNUradio est un logiciel en libre-accès utilisé pour faire du traitement de signal radio. Il prend la forme d'une programmation par bloc. Les blocs sont codés en python ou C++ et il est possible d'ajouter des blocs python à ceux déjà développés. L'objectif de notre travail était de proposer un placeholder pouvant accueillir un modèle de réseau de neurones. Pour cela, nous proposons un fichier GNU avec un floxgraph possible et nous avons mis un réseau trivial non entraîné. 
+
 ### Valeur ajoutée
 
 Notre travail a consisté à développer un bloc python pour gnu radio capable d'accueillir un réseau de neurones pour l'identification d'un signal au sein d'un bruit.
