@@ -1,6 +1,6 @@
 options:
   parameters:
-    author: ''
+    author: henry darbusse
     catch_exceptions: 'True'
     category: '[GRC Hier Blocks]'
     cmake_opt: ''
@@ -11,7 +11,7 @@ options:
     gen_linking: dynamic
     generate_options: qt_gui
     hier_block_src_path: '.:'
-    id: main
+    id: untitled2
     max_nouts: '0'
     output_language: python
     placement: (0,0)
@@ -22,109 +22,156 @@ options:
     run_options: prompt
     sizing_mode: fixed
     thread_safe_setters: ''
-    title: main
+    title: Not titled yet
     window_size: (1000,1000)
   states:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [8, 8]
+    coordinate: [8, 8.0]
     rotation: 0
     state: enabled
 
 blocks:
+- name: freq
+  id: variable_qtgui_range
+  parameters:
+    comment: ''
+    gui_hint: 0,0,1,10
+    label: Center Frequency
+    min_len: '200'
+    orient: QtCore.Qt.Horizontal
+    rangeType: float
+    start: 87.7e6
+    step: 200e3
+    stop: 107.9e6
+    value: 90.4e6
+    widget: counter_slider
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [360, 8.0]
+    rotation: 0
+    state: enabled
+- name: rfGain
+  id: variable_qtgui_range
+  parameters:
+    comment: ''
+    gui_hint: 1,0,1,10
+    label: RF Gain (dB)
+    min_len: '200'
+    orient: QtCore.Qt.Horizontal
+    rangeType: float
+    start: '0'
+    step: '1'
+    stop: '50'
+    value: '10'
+    widget: counter_slider
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [904, 0.0]
+    rotation: 0
+    state: enabled
 - name: samp_rate
   id: variable
   parameters:
     comment: ''
-    value: '32000'
+    value: '2480000'
   states:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [184, 12]
+    coordinate: [232, 8.0]
     rotation: 0
     state: enabled
-- name: analog_sig_source_x_0
-  id: analog_sig_source_x
+- name: analog_wfm_rcv_0
+  id: analog_wfm_rcv
   parameters:
     affinity: ''
     alias: ''
-    amp: '1'
+    audio_decimation: '4'
     comment: ''
-    freq: '1000'
     maxoutbuf: '0'
     minoutbuf: '0'
-    offset: '0'
-    phase: '0'
-    samp_rate: samp_rate
-    showports: 'False'
-    type: complex
-    waveform: analog.GR_COS_WAVE
+    quad_rate: 48000*4
   states:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [168, 184.0]
+    coordinate: [928, 456.0]
+    rotation: 0
+    state: enabled
+- name: audio_sink_0
+  id: audio_sink
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    device_name: ''
+    num_inputs: '1'
+    ok_to_block: 'True'
+    samp_rate: '48000'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1192, 468.0]
+    rotation: 0
+    state: enabled
+- name: blocks_file_sink_0
+  id: blocks_file_sink
+  parameters:
+    affinity: ''
+    alias: ''
+    append: 'False'
+    comment: ''
+    file: output
+    type: complex
+    unbuffered: 'False'
+    vlen: '1'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1040, 268.0]
     rotation: 0
     state: enabled
 - name: epy_block_0
   id: epy_block
   parameters:
-    _source_code: "import numpy as np\nimport os\nimport torch\nfrom gnuradio import\
-      \ gr\n\n\nclass blk(gr.sync_block):\n    \"\"\"Model-based signal/noise detector\
-      \ and gate for complex IQ streams.\"\"\"\n\n    def __init__(self,\n       \
-      \          model_path='/home/erhelito/Nextcloud/files/travail/info/Hackathon-ONERA/models/signal_noise_detector.pt',\n\
-      \                 threshold=0.5):\n        gr.sync_block.__init__(\n       \
-      \     self,\n            name='Signal/Noise Detector Block',\n            in_sig=[np.complex64],\n\
-      \            out_sig=[np.complex64]\n        )\n        print('current working\
-      \ directory:', os.getcwd())\n\n        self.threshold = float(threshold)\n \
-      \       self.model_path = model_path\n        self.model = self.load_model(\n\
-      \            self.resolve_model_path(model_path))\n        self.last_probability\
-      \ = 0.0\n        self.last_class_name = 'noise'\n        self._warned_once =\
-      \ False\n\n        \n\n    def resolve_model_path(self, model_path):\n     \
-      \   \"\"\"if os.path.isabs(model_path):\n            return model_path\"\"\"\
-      \n        \"\"\"base_dir = os.path.dirname(os.path.abspath(__file__))\n    \
-      \    return os.path.normpath(os.path.join(base_dir, model_path))\"\"\"\n   \
-      \     return model_path\n\n    def load_model(self, model_path):\n        model\
-      \ = torch.jit.load(model_path)\n        model.eval()\n\n        return model\n\
-      \n    def predict_proba(self, model, x):\n        with torch.no_grad():\n  \
-      \          out = model(x)\n\n            return float(out.reshape(-1)[0].item())\n\
-      \n    def predict_class(self, model, x, threshold=0.5):\n        probability\
-      \ = self.predict_proba(model, x)\n        class_id = int(probability >= threshold)\n\
-      \        class_name = 'signal' if class_id == 1 else 'noise'\n\n        return\
-      \ class_id, class_name, probability\n\n    def work(self, input_items, output_items):\n\
-      \        iq = input_items[0]\n        \"\"\"\"\n        !!!!!!!!!!!!!!!!!!\n\
-      \        justify below\n        !!!!!!!!!!!!!!!!!!\n        \"\"\"\n\n     \
-      \   # Expected model input: batch of IQ samples encoded as [real, imag].\n \
-      \       features = np.stack((iq.real, iq.imag), axis=-\n                   \
-      \         1).astype(np.float32, copy=False)\n        x = torch.from_numpy(features).unsqueeze(0)\n\
-      \n        try:\n            class_id, class_name, probability = self.predict_class(self.model,\n\
-      \                                                                   x,\n   \
-      \                                                                threshold=self.threshold)\n\
-      \            self.last_probability = probability\n            self.last_class_name\
-      \ = class_name\n\n            if class_id == 1:\n                output_items[0][:]\
-      \ = iq\n            else:\n                output_items[0][:] = np.complex64(0.0\
-      \ + 0.0j)\n\n        except Exception as exc:\n            # Keep the flowgraph\
-      \ alive and bypass data if inference fails.\n            if not self._warned_once:\n\
-      \                print('Signal/Noise Detector Block inference error:', exc)\n\
-      \                self._warned_once = True\n\n            output_items[0][:]\
-      \ = iq\n\n        return len(output_items[0])\n"
+    _source_code: "\"\"\"\nEmbedded Python Blocks:\n\nEach time this file is saved,\
+      \ GRC will instantiate the first class it finds\nto get ports and parameters\
+      \ of your block. The arguments to __init__  will\nbe the parameters. All of\
+      \ them are required to have default values!\n\"\"\"\n\nimport numpy as np\n\
+      from gnuradio import gr\n\n\nclass blk(gr.sync_block):  # other base classes\
+      \ are basic_block, decim_block, interp_block\n    \"\"\"Embedded Python Block\
+      \ example - a simple multiply const\"\"\"\n\n    def __init__(self, example_param=1.0):\
+      \  # only default arguments here\n        \"\"\"arguments to this function show\
+      \ up as parameters in GRC\"\"\"\n        gr.sync_block.__init__(\n         \
+      \   self,\n            name='Embedded Python Block',   # will show up in GRC\n\
+      \            in_sig=[np.complex64],\n            out_sig=[np.complex64]\n  \
+      \      )\n        # if an attribute with the same name as a parameter is found,\n\
+      \        # a callback is registered (properties work, too).\n        self.example_param\
+      \ = example_param\n\n    def work(self, input_items, output_items):\n      \
+      \  \"\"\"example: multiply with constant\"\"\"\n        output_items[0][:] =\
+      \ input_items[0] * self.example_param\n        return len(output_items[0])\n"
     affinity: ''
     alias: ''
     comment: ''
+    example_param: ''
     maxoutbuf: '0'
     minoutbuf: '0'
-    model_path: '"/home/erhelito/Nextcloud/files/travail/info/Hackathon-ONERA/models/signal_noise_detector.pt"'
-    threshold: '0.5'
   states:
-    _io_cache: ('Signal/Noise Detector Block', 'blk', [('model_path', "'/home/erhelito/Nextcloud/files/travail/info/Hackathon-ONERA/models/signal_noise_detector.pt'"),
-      ('threshold', '0.5')], [('0', 'complex', 1)], [('0', 'complex', 1)], 'Model-based
-      signal/noise detector and gate for complex IQ streams.', ['model_path', 'threshold'])
+    _io_cache: ('Embedded Python Block', 'blk', [('example_param', '1.0')], [('0',
+      'complex', 1)], [('0', 'complex', 1)], 'Embedded Python Block example - a simple
+      multiply const', ['example_param'])
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [464, 256.0]
+    coordinate: [432, 596.0]
     rotation: 0
     state: enabled
 - name: qtgui_const_sink_x_0
@@ -216,11 +263,11 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [688, 168.0]
+    coordinate: [312, 200.0]
     rotation: 0
     state: enabled
-- name: qtgui_time_sink_x_0
-  id: qtgui_time_sink_x
+- name: qtgui_waterfall_sink_x_0
+  id: qtgui_waterfall_sink_x
   parameters:
     affinity: ''
     alias: ''
@@ -234,89 +281,53 @@ blocks:
     alpha7: '1.0'
     alpha8: '1.0'
     alpha9: '1.0'
-    autoscale: 'False'
     axislabels: 'True'
-    color1: blue
-    color10: dark blue
-    color2: red
-    color3: green
-    color4: black
-    color5: cyan
-    color6: magenta
-    color7: yellow
-    color8: dark red
-    color9: dark green
+    bw: samp_rate
+    color1: '0'
+    color10: '0'
+    color2: '0'
+    color3: '0'
+    color4: '0'
+    color5: '0'
+    color6: '0'
+    color7: '0'
+    color8: '0'
+    color9: '0'
     comment: ''
-    ctrlpanel: 'False'
-    entags: 'True'
+    fc: freq
+    fftsize: '1024'
+    freqhalf: 'True'
     grid: 'False'
     gui_hint: ''
-    label1: Signal 1
-    label10: Signal 10
-    label2: Signal 2
-    label3: Signal 3
-    label4: Signal 4
-    label5: Signal 5
-    label6: Signal 6
-    label7: Signal 7
-    label8: Signal 8
-    label9: Signal 9
+    int_max: '10'
+    int_min: '-140'
+    label1: ''
+    label10: ''
+    label2: ''
+    label3: ''
+    label4: ''
+    label5: ''
+    label6: ''
+    label7: ''
+    label8: ''
+    label9: ''
     legend: 'True'
-    marker1: '-1'
-    marker10: '-1'
-    marker2: '-1'
-    marker3: '-1'
-    marker4: '-1'
-    marker5: '-1'
-    marker6: '-1'
-    marker7: '-1'
-    marker8: '-1'
-    marker9: '-1'
+    maxoutbuf: '0'
+    minoutbuf: '0'
     name: '""'
     nconnections: '1'
-    size: '1024'
-    srate: samp_rate
-    stemplot: 'False'
-    style1: '1'
-    style10: '1'
-    style2: '1'
-    style3: '1'
-    style4: '1'
-    style5: '1'
-    style6: '1'
-    style7: '1'
-    style8: '1'
-    style9: '1'
-    tr_chan: '0'
-    tr_delay: '0'
-    tr_level: '0.0'
-    tr_mode: qtgui.TRIG_MODE_FREE
-    tr_slope: qtgui.TRIG_SLOPE_POS
-    tr_tag: '""'
+    showports: 'False'
     type: complex
     update_time: '0.10'
-    width1: '1'
-    width10: '1'
-    width2: '1'
-    width3: '1'
-    width4: '1'
-    width5: '1'
-    width6: '1'
-    width7: '1'
-    width8: '1'
-    width9: '1'
-    ylabel: Amplitude
-    ymax: '1'
-    ymin: '-1'
-    yunit: '""'
+    wintype: window.WIN_BLACKMAN_hARRIS
   states:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [712, 56.0]
+    coordinate: [616, 268.0]
     rotation: 0
     state: enabled
-- name: qtgui_waterfall_sink_x_0
+- name: qtgui_waterfall_sink_x_1
   id: qtgui_waterfall_sink_x
   parameters:
     affinity: ''
@@ -374,15 +385,63 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [504, 24.0]
+    coordinate: [824, 564.0]
+    rotation: 0
+    state: enabled
+- name: rational_resampler_xxx_0
+  id: rational_resampler_xxx
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    decim: '32'
+    fbw: '0'
+    interp: '3'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    taps: '[]'
+    type: ccc
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [384, 432.0]
+    rotation: 0
+    state: enabled
+- name: soapy_rtlsdr_source_0
+  id: soapy_rtlsdr_source
+  parameters:
+    affinity: ''
+    agc: 'False'
+    alias: ''
+    bias: 'False'
+    bufflen: '16384'
+    center_freq: freq
+    comment: ''
+    dev_args: ''
+    freq_correction: '0'
+    gain: rfGain
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    samp_rate: samp_rate
+    type: fc32
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [48, 384.0]
     rotation: 0
     state: enabled
 
 connections:
-- [analog_sig_source_x_0, '0', epy_block_0, '0']
-- [analog_sig_source_x_0, '0', qtgui_time_sink_x_0, '0']
-- [analog_sig_source_x_0, '0', qtgui_waterfall_sink_x_0, '0']
-- [epy_block_0, '0', qtgui_const_sink_x_0, '0']
+- [analog_wfm_rcv_0, '0', audio_sink_0, '0']
+- [epy_block_0, '0', qtgui_waterfall_sink_x_1, '0']
+- [rational_resampler_xxx_0, '0', analog_wfm_rcv_0, '0']
+- [rational_resampler_xxx_0, '0', blocks_file_sink_0, '0']
+- [soapy_rtlsdr_source_0, '0', epy_block_0, '0']
+- [soapy_rtlsdr_source_0, '0', qtgui_const_sink_x_0, '0']
+- [soapy_rtlsdr_source_0, '0', qtgui_waterfall_sink_x_0, '0']
+- [soapy_rtlsdr_source_0, '0', rational_resampler_xxx_0, '0']
 
 metadata:
   file_format: 1
