@@ -1,19 +1,46 @@
 ### Nature du livrable
 
-GNUradio est un logiciel en libre-accès utilisé pour faire du traitement de signal radio. Il prend la forme d'une programmation par bloc. Les blocs sont codés en python ou C++ et il est possible d'ajouter des blocs python à ceux déjà développés. L'objectif de notre travail était de proposer un placeholder pouvant accueillir un modèle de réseau de neurones. Pour cela, nous proposons un fichier GNU avec un floxgraph possible et nous avons mis un réseau trivial non entraîné. 
+GNU Radio est un environnement open source de traitement du signal par blocs.  
+Le projet fournit une intégration **placeholder** d’un réseau de neurones dans cette chaîne, avec :
+- un flowgraph GNU Radio (`main_gnuradio/main.grc`) ;
+- un bloc Python embarqué de détection (`main_gnuradio/main_epy_block_0.py`) ;
+- des scripts de création/chargement de modèles TorchScript (`models/`) ;
+- une variante hors GNU Radio basée sur `pyrtlsdr`, développée sur les derniers jours (`main_pyrtlsdr/main.py`).
+
+L’objectif atteint est la démonstration d’une intégration de modèle PyTorch dans un traitement IQ, plus qu’une performance de détection optimisée.
+
+### Démarche et choix techniques
+
+Nous avons commencé par un modèle Torch très simple pour valider l’intégration de bout en bout, puis nous avons gardé la même interface pour un second modèle plus réaliste basé sur des fenêtres IQ de taille fixe.
+
+Le dépôt est organisé en trois briques :
+- `main_gnuradio/` pour l’intégration temps réel dans GNU Radio ;
+- `main_pyrtlsdr/` pour tester la chaîne sans flowgraph ;
+- `models/` pour l’entraînement et l’export des modèles.
 
 ### Valeur ajoutée
 
-Notre travail a consisté à développer un bloc python pour gnu radio capable d'accueillir un réseau de neurones pour l'identification d'un signal au sein d'un bruit.
+La contribution principale est d’avoir relié un flux IQ complexe à une inférence réseau de neurones dans un bloc GNU Radio, puis d’avoir documenté une architecture réutilisable pour brancher un modèle entraîné ultérieurement.
+
+Le dépôt contient ainsi une base fonctionnelle pour :
+- injecter un modèle TorchScript (`.pt`) ;
+- traiter un flux IQ en temps réel ;
+- décider « signal / bruit » et propager le résultat dans la chaîne (cette partie nécessite un entrainement du modèle sur un jeu de données que nous n'avions pas, actuellement le modèle renvoie de fausses valeurs)
 
 ### Difficultés rencontrées
 
-Ensuite, les principaux problèmes que nous avons rencontré concernent l'utilisation de gnuradio et l'import de programme python. En effet, l'import de pytorch a été compliqué et il a été nécessaire de réaliser l'installation de gnuradio à plusieurs reprises en adaptant l'environnement dans lequel le logiciel est installé. 
+Les principaux points bloquants ont été :
+- la configuration conjointe de GNU Radio et PyTorch selon l’environnement d’exécution ;
+- la gestion des tailles variables de buffers IQ côté GNU Radio, alors que les réseaux de neurones attendent une taille d’entrée fixe ;
+- le chargement fiable des modèles (chemins de fichiers, exécution depuis différents répertoires).
 
-Par ailleurs, les réseaux de neurones doivent impérativement prendre en entrée un nombre fixé de données (puisque le nombre de neurones est considéré comme un hyperparamètre). Or, les blocs simulant un signal sur gnou peuvent produire des signaux de tailles très variées :  en sortie des blocs on trouve des listes de complexes de taille variant entre quelques dizaines et 4096. Afin d'identifier, nous avons dû créer dans gnu un bloc de débuggage (affichage des longueurs des listes). Nous avons ensuite créer un bloc qui fonctionnait comme une file d'attente et ne renvoyant que des listes de complexe de taille constante. Cependant il semble que GNU Radio, ne tient pas à maintenir l'unité de ces listes, qui se trouvait donc décomposé au bloc d'après. Avec plus de temps on aurait pu essayer de passer de Stream en Vector. Cependant on a trouvé une solution plus simple, mettre dans un même bloc ce filtre, et le réseau de neuronnes.
+Une partie du travail a consisté à instrumenter les blocs pour observer les tailles réellement reçues, puis à adapter la logique de préparation des données avant inférence.
+Concernant la gestion des chemins de modèles, nous avons été forcés de fixer le chemin en absolu, car gnuradio exécute le flowgraph depuis un répertoire temporaire avant de lancer le script principal dans le répertoire du projet, ce qui rendait les chemins relatifs non fiables.
 
-Nous avons en outre eu des difficultés à charger des modèles entraînés dans gnu. Il a fallu gérer intelligemment les chemins d'accès aux modèles afin que gnu puisse les retrouver.
+### Fonctionnement et limites
+
+Le code est exécutable avec les dépendances indiquées dans `requirements.txt` et/ou `environment.yml`, mais GNU Radio doit être installé via conda.
 
 ### Licence
 
-This project is licensed under the terms of the MIT license.
+Ce projet est distribué sous licence MIT (voir `LICENSE`).
