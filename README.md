@@ -22,7 +22,7 @@ conda activate hackathon-onera
 
 ### Avec pip seul (sans GNU Radio)
 
-> GNU Radio doit être installé séparément via le gestionnaire de paquets système (`apt`, `dnf`, …) ou via conda.
+> GNU Radio doit être installé séparément via conda pour que les blocs GNU Radio utilisant pytorch fonctionnent correctement.
 
 ```bash
 pip install -r requirements.txt
