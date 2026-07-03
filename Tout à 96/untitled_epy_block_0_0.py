@@ -15,4 +15,5 @@ class blk(gr.sync_block):
     def work(self, input_items, output_items):
         output_items[0][:] = input_items[0]
         print(len(output_items[0]))
+        print(output_items[0])
         return len(output_items[0])

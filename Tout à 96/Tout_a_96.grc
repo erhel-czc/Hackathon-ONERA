@@ -99,9 +99,9 @@ blocks:
       \ = 0\n\n    def work(self, input_items, output_items):\n        self.signal\
       \ = np.concatenate((self.signal,input_items[0]),axis=0)\n        if len(self.signal)\
       \ >= 4096:\n            self.count+=1\n            if self.count==100:\n   \
-      \             output_items[0] = self.signal[:4096]\n                self.signal\
-      \ = self.signal[4096:]\n                print(\"boom\")\n            else:\n\
-      \                output_items[0] = []\n        else :\n            output_items[0]\
+      \             output_items[0][:] = self.signal[:4096]\n                self.signal\
+      \ = self.signal[4096:]\n                print(output_items[0])\n           \
+      \ else:\n                output_items[0] = []\n        else :\n            output_items[0]\
       \ = []\n        return len(output_items[0])\n"
     affinity: ''
     alias: ''
@@ -125,7 +125,7 @@ blocks:
       \            name='Tiago Print Block',  \n            in_sig=[np.complex64],\n\
       \            out_sig=[np.complex64]\n        )\n\n    def work(self, input_items,\
       \ output_items):\n        output_items[0][:] = input_items[0]\n        print(len(output_items[0]))\n\
-      \        return len(output_items[0])\n"
+      \        print(output_items[0])\n        return len(output_items[0])\n"
     affinity: ''
     alias: ''
     comment: ''

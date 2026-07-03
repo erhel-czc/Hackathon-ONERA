@@ -19,9 +19,9 @@ class blk(gr.sync_block):
         if len(self.signal) >= 4096:
             self.count+=1
             if self.count==100:
-                output_items[0] = self.signal[:4096]
+                output_items[0][:] = self.signal[:4096]
                 self.signal = self.signal[4096:]
-                print("boom")
+                print(output_items[0])
             else:
                 output_items[0] = []
         else :
