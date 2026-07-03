@@ -16,10 +16,14 @@ class blk(gr.sync_block):
 
     def work(self, input_items, output_items):
         self.signal = np.concatenate((self.signal,input_items[0]),axis=0)
-        if len(self.signal) >= 4096 and self.count==10:
-            output_items[0] = self.signal[:4096]
-            self.signal = self.signal[4096:]
+        if len(self.signal) >= 4096:
+            self.count+=1
+            if self.count==100:
+                output_items[0] = self.signal[:4096]
+                self.signal = self.signal[4096:]
+                print("boom")
+            else:
+                output_items[0] = []
         else :
             output_items[0] = []
-            self.count+=1
         return len(output_items[0])

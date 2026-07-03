@@ -5,7 +5,7 @@ from gnuradio import gr
 class blk(gr.sync_block):
 
     def __init__(self):  
-            gr.sync_block.__init__(
+        gr.sync_block.__init__(
             self,
             name='Tiago Print Block',  
             in_sig=[np.complex64],
