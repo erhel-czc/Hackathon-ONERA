@@ -35,6 +35,10 @@ Les principaux points bloquants ont été :
 - le chargement fiable des modèles (chemins de fichiers, exécution depuis différents répertoires).
 
 Une partie du travail a consisté à instrumenter les blocs pour observer les tailles réellement reçues, puis à adapter la logique de préparation des données avant inférence.
+Par ailleurs, les réseaux de neurones doivent impérativement prendre en entrée un nombre fixe de données (puisque le nombre de neurones est considéré comme un hyperparamètre). Or, les blocs simulant un signal sur GNU peuvent produire des signaux de tailles très variées : en sortie des blocs, on trouve des listes de complexes dont la taille varie entre 1 et 4096 IQ. Afin d'identifier le problème, nous avons dû créer dans GNU un bloc de débogage (affichage des longueurs des listes). Nous avons ensuite créé un bloc qui fonctionnait comme une file d'attente et ne renvoyait que des listes de complexes de taille constante. Néanmoins, il semble que GNU Radio ne tienne pas à maintenir l'unité de ces listes, qui se trouvaient donc décomposées dans le bloc suivant. Avec plus de temps, nous aurions pu essayer de passer de Stream à Vector. Cependant, nous avons trouvé une solution plus simple : mettre dans un même bloc ce filtre et le réseau de neurones.
+
+De la même manière, pour créer une base de données d'entraînement, nous avons eu plus ou moins le même problème de gestion des tailles de buffers, d'autant plus qu'une seconde de données correspondait à plus de 1 Go de données. Nous avons donc placé un bloc de filtrage qui renvoyait une séquence de taille 4096 avant le bloc d'enregistrement dans le fichier de données.
+
 Concernant la gestion des chemins de modèles, nous avons été forcés de fixer le chemin en absolu, car gnuradio exécute le flowgraph depuis un répertoire temporaire avant de lancer le script principal dans le répertoire du projet, ce qui rendait les chemins relatifs non fiables.
 
 ### Fonctionnement et limites
